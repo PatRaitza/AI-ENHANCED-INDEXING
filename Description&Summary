@@ -1,0 +1,123 @@
+# AI-Enhanced Equity Indexing: Can Machine Learning Improve Risk-Adjusted Returns?
+
+### Overview
+
+Can machine learning identify investment opportunities that traditional factor models overlook? And does allowing an AI-driven portfolio to take more active risk necessarily improve its performance?
+
+This project explores these questions through an enhanced-indexing simulation built in **R with AI assistance**. Using XGBoost, the model predicts individual stocks' returns relative to the S&P 500 and translates these predictions into portfolio weights under different tracking-error constraints.
+
+The objective is not to develop a market-beating trading algorithm, but to investigate whether machine-learning signals can add value to a benchmark-oriented investment strategy.
+
+## 1. Methodology
+
+The simulation follows five main steps:
+
+**1. Data collection**
+
+Historical equity prices from Yahoo Finance, covering 2010–2025, are used to construct a dataset of approximately 500 current S&P 500 constituents.
+
+**2. Feature engineering**
+
+Seven price-derived indicators serve as predictive variables:
+
+- 3-, 6- and 12-month momentum
+- 12-month historical volatility
+- Market beta
+- Distance from the 52-week high
+- Moving-average signal
+
+**3. Machine-learning predictions**
+
+An XGBoost regression model estimates next-month stock returns relative to the S&P 500. An expanding-window training approach generates predictions from 2019 onward using historical observations, rather than randomly splitting the dataset.
+
+**4. Portfolio construction**
+
+Predicted returns are converted into active portfolio positions using a covariance-adjusted allocation approach.
+
+Three annualized ex-ante tracking-error targets are tested: **0.5%, 1.0% and 2.0%**.
+
+The portfolios are compared against an equal-weighted benchmark constructed from the available stock universe and a traditional momentum/risk-based factor strategy.
+
+**5. Performance evaluation**
+
+Performance is evaluated using annualized returns, excess returns, realized tracking error, information ratios, turnover and cross-sectional prediction accuracy.
+
+## 2. Key Findings
+
+### Portfolio performance
+
+| Metric | 0.5% TE target | 1.0% TE target | 2.0% TE target |
+|---|---:|---:|---:|
+| ML annualized return | 17.6% | 17.4% | 16.7% |
+| ML annualized active return | +0.283% | +0.144% | −0.475% |
+| Realized ML tracking error | 0.825% | 1.42% | 1.65% |
+| ML information ratio | 0.342 | 0.101 | −0.288 |
+
+*Results are based on the exploratory backtest, including its simplified transaction-cost assumptions.*
+
+### Prediction accuracy
+
+| Metric | Result |
+|---|---:|
+| Mean monthly information coefficient (Pearson) | 0.0504 |
+| IC t-statistic | 2.41 |
+| Positive IC months | 59.0% |
+| Mean monthly rank IC (Spearman) | 0.0127 |
+
+The model demonstrated modest positive cross-sectional predictive relationships, although its substantially weaker rank IC suggests that consistent stock ranking remains challenging.
+
+### The central observation
+
+**Increasing the active-risk budget did not improve investment performance.**
+
+The ML-enhanced portfolio generated its strongest risk-adjusted results at the lowest tracking-error target. As the permitted active-risk budget increased, performance deteriorated, eventually resulting in negative excess returns.
+
+This raises an interesting question:
+
+**Does machine learning identify useful but fragile investment signals, or do larger portfolio deviations simply amplify prediction errors and transaction costs?**
+
+The experiment does not conclusively answer this question, but illustrates the difficulty of translating statistical predictions into economically meaningful investment decisions.
+
+## 3. Limitations
+
+This project is an exploratory simulation rather than a production-ready investment strategy.
+
+Several limitations should be considered:
+
+- **Survivorship bias:** Historical simulations use today's S&P 500 constituents rather than historical index membership.
+- **Benchmark approximation:** The benchmark is equal-weighted and does not replicate the market-cap-weighted S&P 500.
+- **Portfolio optimization:** A heuristic covariance-adjusted allocation method approximates the desired tracking-error constraints rather than solving an exact institutional optimization problem.
+- **Transaction costs:** Trading costs and turnover are simplified, potentially affecting net performance.
+- **Data availability:** Public market data may be revised or differ between downloads.
+- **Statistical uncertainty:** Positive predictive correlations do not establish persistent, exploitable investment alpha.
+
+Consequently, the reported performance should be interpreted as an illustration of the model's behaviour under the stated assumptions.
+
+## 4. Reproducing the Analysis
+
+The project was developed in R using the following main packages:
+
+`tidyverse`, `tidyquant`, `rvest`, `lubridate`, `slider`, `zoo`, `xgboost`, `PerformanceAnalytics` and `quadprog`.
+
+To reproduce the experiment:
+
+1. Install R and the required packages.
+2. Download the R script from this repository.
+3. Run the script from beginning to end.
+4. Review the generated performance tables, information coefficients and visualizations.
+
+A fixed random seed (`set.seed(123)`) supports reproducibility. Results may nevertheless vary with package versions, data revisions and computational environments.
+
+## 5. Conclusion
+
+The experiment suggests that **predictive accuracy and investment performance are not necessarily the same thing**.
+
+Although the machine-learning model identified modest relationships between historical stock characteristics and subsequent returns, greater freedom to deviate from the benchmark did not translate into better investment outcomes.
+
+The central challenge therefore extends beyond predicting stock returns: it involves determining how much confidence to place in those predictions when constructing a portfolio.
+
+This distinction between statistical prediction and practical investment decision-making is the main motivation behind the project.
+
+---
+
+*Independent educational project developed in R with AI-assisted coding and analytical support.*
